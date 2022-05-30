@@ -1,4 +1,7 @@
 #include <iostream>
+#include <string>
+#include <vector>
+
 using namespace std;
 class Game{
     private:
@@ -7,12 +10,20 @@ class Game{
         bool level;//玩家選擇了簡單(turn)或困難(false)
         int numOfPair;//玩家翻開了幾對正確
         int cardset[];//定義卡組，0-12:紅心 13-25:方塊 26-38:黑桃 39-51:梅花 (52:空)
+
+        int cardsetX;
+        int cardsetY;
+        string suits[4] = {"紅心", "方塊", "黑桃", "梅花"};
+        string ranks[13] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+        vector<int> cardsetA={3,33,18,16,40,2,28,41,46,27,5,15};
+        vector<int> cardsetB={2,1,16,46,33,3,14,41,7,32,20,17,28,45,4,44,15,31,34,47};
+        vector<int> cardset;
+        //int cardset[];//定義卡組，0-12:紅心 13-25:方塊 26-38:黑桃 39-51:梅花 (52:空)
     public:
         Game();
         void clear();
         void backHome();
 	    bool cardempty(int);//Null true 
-
         void home();//主頁
         void rules();//
         void quit();//離開
@@ -20,50 +31,107 @@ class Game{
         void start();
         void setlevel();//玩家選擇了簡單(turn)或困難(false)
         void setcardset();//玩家選擇了12或20張卡
-        void showcard(int, int);//顯示卡組
-        string cardinfo(int);//顯示卡[2 梅花]
-        string cardorder(int);//顯示卡<  03  >
+        void setnumOfCard();//玩家選擇了12或20張卡
 
         void showcardB(int, int);//顯示卡組
         void showcardA(int);//顯示卡組
 
         void cardinfo(int);//顯示卡[2 梅花]
         void cardorder(int);//顯示卡<  03  >
+        void cardorder();//顯示卡<  03  >
 
         void paired(int);//
         bool match(int,int);//是否配對成功
         void end();//全部配對成功
-@@ -38,7 +45,6 @@ void Game::backHome(){
+};
+
+Game::Game(){
+
+    turned=0;
+}
+bool Game::cardempty(int a){
+    return (cardset[a]>51);
+}
+
+void Game::backHome(){
+    cin.ignore();
+    cout<<"Press Enter to Home page\n";
+    cin.get();
+    cout<<"\033[2J\033[1;1H";
     home();
 }
 void Game::rules(){
-
     cout<<"\033[2J\033[1;1H"<<"Rules\n遊戲開始時，玩家可選擇兩種難度:\n簡單模式:\n    卡牌同數字即可，顏色可不相同\n困難模式:\n    則為卡牌的數字與顏色皆須相同\n(黑桃與梅花視為同色，愛心與方塊視為同色)\n";
     backHome();
 }
-@@ -48,7 +54,6 @@ void Game::quit(){
+//離開
+void Game::quit(){
+    cout<<"\033[2J\033[1;1H"<<"\n\n    Goodbye\n\nGroup 6:\nB0405651 司徒秀瑜\nA8245919 陳詩妍\nA7223679 顏瑞含";
 }
 //主頁
 void Game::home(){
-
     cout<<"Welecome To Group 6\n    Card Matching\nPress 1 Get Start\nPress 2 Read Rules\nPress 0 Quit\n";
     int a;cin>>a;
     while(a>2){
-@@ -69,6 +74,7 @@ void Game::start(){
+        cout<<"\033[2J\033[1;1H";
+        cout<<"Welecome To Group 6\n    Card Matching\nPress 1 Get Start\nPress 2 Read Rules\nPress 0 Quit\n";
+        cout<<"Error: "<<a<<" is not a corrtect command!!\nTry again\n";
+        cin>>a;
+    } 
+    if(a==1){
+        cout<<"\033[2J\033[1;1H";start();}
+    else if(a==2){
+        cout<<"\033[2J\033[1;1H";rules();}
+    else if(a==0){
+        cout<<"\033[2J\033[1;1H";quit();}
+}
+void Game::start(){
     setlevel();
     //cout<<"Level: "<<level<<"\nCard: "<<numOfCard;
+    cardorder();
+    cout<<"Select a Card:\n";
+    int a; cin>>a;
+    while(a>numOfCard || cardempty(a-1) || a<1){//無法選擇比卡牌數大 或 比1少 或 空卡牌
+        cardorder();
+        cout<<"Error: "<<a<<" is "<<(cardempty(a-1) ? "empty" : "out of range")<<"\nSelect a Card again:\n";
+        cin>>a;
+    }
+    showcardA(a);
+
+    cout<<"Match a Card:\n";
+    int b; cin>>b;
+    while(b>numOfCard || cardempty(b-1) || b<1 || b==a){//無法選擇比卡牌數大 或 比1少 或 空卡牌
+        turned--;
+        showcardA(a);
+        cout<<"Error: "<<b<<" is "<<(cardempty(b-1) ? "empty" : "out of range")<<"\nMatch a Card again:\n";
+        cin>>b;
+    }
+    showcardB(a,b);
 }
 
 //玩家選擇了簡單(turn)或困難(false)
+//玩家選擇了簡單(true)或困難(false)
 void Game::setlevel(){
     cout<<"\033[2J\033[1;1H"<<"Select the Level: \n1    Easy(Same Number)\n2    Hard(Same Number and Colour)\n0    Back Home\n";
-@@ -85,6 +91,7 @@ void Game::setlevel(){
+    int a; cin>>a;
+    while(a>2){
+        cout<<"\033[2J\033[1;1H"<<"Select the Level: \n1    Easy(Same Number)\n2    Hard(Same Number and Colour)\n0    Back Home\n";
+        cout<<"Error: "<<a<<" is not a corrtect command!!\nTry again\n";
+        cin>>a;
+    } 
+    if(a==1){
+        cout<<"\033[2J\033[1;1H"; level=true;setcardset();}
+        cout<<"\033[2J\033[1;1H"; level=true;setnumOfCard();}
+    else if(a==2){
+        cout<<"\033[2J\033[1;1H"; level=false;setcardset();}
+        cout<<"\033[2J\033[1;1H"; level=false;setnumOfCard();}
     else if(a==0){
         cout<<"\033[2J\033[1;1H";home();}
 }
 
 //玩家選擇了12或20張卡
 void Game::setcardset(){
+void Game::setnumOfCard(){
     cout<<"\033[2J\033[1;1H"<<"Select the Level: \n1    12 Card\n2    20 Crad\n0    Back Page\n";
     int a; cin>>a;
     while(a>2){
@@ -73,11 +141,69 @@ void Game::setcardset(){
     } 
     if(a==1){
         cout<<"\033[2J\033[1;1H"; numOfCard=12;}
+        cout<<"\033[2J\033[1;1H"; numOfCard=12;cardset=cardsetA;cardsetX=3;cardsetY=4;}
     else if(a==2){
         cout<<"\033[2J\033[1;1H"; numOfCard=20;}
+        cout<<"\033[2J\033[1;1H"; numOfCard=20;cardset=cardsetB;cardsetX=4;cardsetY=5;}
     else if(a==0){
         cout<<"\033[2J\033[1;1H";setlevel();}
+    //cardset[numOfCard];
 }
+//顯示卡[2 梅花]
+void Game::cardinfo(int a){
+    cout<<"["<<ranks[a % 13]<<" "<<suits[a / 13]<<"] ";
+}
+void Game::showcardB(int a, int b){
+    turned++;
+    cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<endl;
+    int s=1;//從1數到最後
+    for(int y=0; y<cardsetY; y++){
+        for(int x=0; x<cardsetX; x++,s++){
+            if(s==a)
+                cardinfo(cardset[a-1]);
+            else if(s==b)
+                cardinfo(cardset[b-1]);
+            else if(cardempty(s-1))
+                cout<<"         ";
+            else if(!cardempty(s-1))
+                cout<<"<  "<<(s<10 ? "0" :"")<<s<<"  > ";
+            cout<<(x==cardsetX-1 ? "\n":"");
+        }
+    }
+}
+void Game::showcardA(int a){
+    turned++;
+    cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<endl;
+    int s=1;//從1數到最後
+    for(int y=0; y<cardsetY; y++){
+        for(int x=0; x<cardsetX; x++,s++){
+            if(s==a)
+                cardinfo(cardset[a-1]);
+            else if(cardempty(s-1))
+                cout<<"         ";
+            else if(!cardempty(s-1))
+                cout<<"<  "<<(s<10 ? "0" :"")<<s<<"  > ";
+            cout<<(x==cardsetX-1 ? "\n":"");
+        }
+    }
+}
+//顯示卡<  03  >
+void Game::cardorder(){
+    /*numOfCard=20,cardsetY=5,cardsetX=4;
+    cardset=cardsetB;*/
+    cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<endl;
+    int s=1;
+    for(int y=0; y<cardsetY; y++){
+        for(int x=0; x<cardsetX; x++,s++){
+            if(cardempty(s-1))
+                cout<<"         ";
+            else if(!cardempty(s-1))
+                cout<<"<  "<<(s<10 ? "0" :"")<<s<<"  > ";
+            cout<<(x==cardsetX-1 ? "\n":"");
+        }
+    }
+}
+
 int main()
 {
     Game a;
