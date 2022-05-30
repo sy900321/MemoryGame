@@ -8,8 +8,8 @@ class Game{
         int numOfCard;//玩家選擇了12或20張卡
         bool level;//玩家選擇了簡單(turn)或困難(false)
         int numOfPair;//玩家翻開了幾對正確
-        
 
+        
         int cardsetX;
         int cardsetY;
         string suits[4] = {"紅心", "方塊", "黑桃", "梅花"};
@@ -17,16 +17,13 @@ class Game{
         vector<int> cardsetA={3,33,18,16,40,2,28,41,46,27,5,15};
         vector<int> cardsetB={2,1,16,46,33,3,14,41,7,32,20,17,28,45,4,44,15,31,34,47};
         vector<int> cardset;
-        //int cardset[];//定義卡組，0-12:紅心 13-25:方塊 26-38:黑桃 39-51:梅花 (52:空)
         //int cardset[];//定義卡組，0-12:紅心 13-25:方塊 26-38:黑桃 39-51:梅花 (52:空) 
+        //int cardset[];//定義卡組，0-12:紅心 13-25:方塊 26-38:黑桃 39-51:梅花 (52:空)
     public:
         Game();
-        void clear();
-        void backHome();
-	    bool cardempty(int);//Null true 
-
  void clear();
  void backHome();
+        void backHome();
         bool cardempty(int);//Null true 
 
 
@@ -34,22 +31,24 @@ class Game{
         void rules();//
         void quit();//離開
 
+        
         void start();
-        void setlevel();//玩家選擇了簡單(turn)或困難(false)
         void setlevel();//玩家選擇了簡單(true)或困難(false)
         void setnumOfCard();//玩家選擇了12或20張卡
 
+        
         void showcardB(int, int);//顯示卡組
         void showcardA(int);//顯示卡組
+
+        
         void cardinfo(int);//顯示卡[2 梅花]
         void cardorder();//顯示卡<  03  >
 
-        void paired(int);//
+        
         bool match(int,int);//是否配對成功
         void end();//全部配對成功
         char grade();
 };
-
 Game::Game(){
     //cardset.clear;
     turned=0;
@@ -91,28 +90,63 @@ void Game::home(){
     else if(a==0){
         cout<<"\033[2J\033[1;1H";quit();}
 }
+
 void Game::start(){
     setlevel();
     //cout<<"Level: "<<level<<"\nCard: "<<numOfCard;
     cardorder();
     cout<<"Select a Card:\n";
     int a; cin>>a;
-    while(a>numOfCard || cardempty(a-1) || a<1){//無法選擇比卡牌數大 或 比1少 或 空卡牌
     while(a>numOfCard || cardempty(a-1) || a<1){
         cardorder();
         cout<<"Error: "<<a<<" is "<<(cardempty(a-1) ? "empty" : "out of range")<<"\nSelect a Card again:\n";
         cin>>a;
+    int a;cin>>a;
+    while(1){
+        if(a>numOfCard || a<1){
+            cardorder();
+            cout<<"Error: "<<a<<" is out of range\nSelect a Card again:\n";
+            cin>>a;
+        }
+        else if(cardempty(a-1)){
+            cardorder();
+            cout<<"Error: "<<a<<" is empty\nSelect a Card again:\n";
+            cin>>a;    
+        }
+        else
+            break;
     }
     showcardA(a);
 
+    
     cout<<"Match a Card:\n";
     int b; cin>>b;
-    while(b>numOfCard || cardempty(b-1) || b<1 || b==a){//無法選擇比卡牌數大 或 比1少 或 空卡牌
     while(b>numOfCard || cardempty(b-1) || b<1 || b==a){
         turned--;
         showcardA(a);
         cout<<"Error: "<<b<<" is "<<(cardempty(b-1) ? "empty" : "out of range")<<"\nMatch a Card again:\n";
         cin>>b;
+    while(1){
+        if(b>numOfCard || b<1){
+            turned--;
+            showcardA(a);
+            cout<<"Error: "<<b<<" is out of range\nSelect a Card again:\n";
+            cin>>b;
+        }
+        else if(b==a){
+            turned--;
+            showcardA(a);
+            cout<<"Error: "<<b<<" was alredy Selected\nSelect a Card again:\n";
+            cin>>b;
+        }
+        else if(cardempty(b-1)){
+            turned--;
+            showcardA(a);
+            cout<<"Error: "<<b<<" is empty\nSelect a Card again:\n";
+            cin>>b;    
+        }
+        else
+            break;
     }
     showcardB(a,b);
     if(match(a,b))
@@ -120,6 +154,7 @@ void Game::start(){
         else
             cout<<"Not a pair"<<endl;
 
+    cout<<(match(a,b)?"There a pair":"Not a pair")<<endl;
     while(numOfPair<numOfCard/2){    
         cout<<"Select a Card:\n";
         cin>>a;
@@ -127,6 +162,19 @@ void Game::start(){
             cardorder();
             cout<<"Error: "<<a<<" is "<<(cardempty(a-1) ? "empty" : "out of range")<<"\nSelect a Card again:\n";
             cin>>a;
+        while(1){
+            if(a>numOfCard || a<1){
+                cardorder();
+                cout<<"Error: "<<a<<" is out of range\nSelect a Card again:\n";
+                cin>>a;
+            }
+            else if(cardempty(a-1)){
+                cardorder();
+                cout<<"Error: "<<a<<" is empty\nSelect a Card again:\n";
+                cin>>a;    
+            }
+            else
+                break;
         }
         showcardA(a);
         cout<<"Match a Card:\n";
@@ -136,16 +184,37 @@ void Game::start(){
             showcardA(a);
             cout<<"Error: "<<b<<" is "<<(cardempty(b-1) ? "empty" : "out of range")<<"\nMatch a Card again:\n";
             cin>>b;
+        while(1){
+            if(b>numOfCard || b<1){
+                turned--;
+                showcardA(a);
+                cout<<"Error: "<<b<<" is out of range\nSelect a Card again:\n";
+                cin>>b;
+            }
+            else if(b==a){
+                turned--;
+                showcardA(a);
+                cout<<"Error: "<<b<<" was alredy Selected\nSelect a Card again:\n";
+                cin>>b;
+            }
+            else if(cardempty(b-1)){
+                turned--;
+                showcardA(a);
+                cout<<"Error: "<<b<<" is empty\nSelect a Card again:\n";
+                cin>>b;    
+            }
+            else
+                break;
         }
         showcardB(a,b);
         if(match(a,b))
             cout<<"There a pair"<<endl;
         else
             cout<<"Not a pair"<<endl;
+        cout<<(match(a,b)?"There a pair":"Not a pair")<<endl;
     }
     end();
 }
-
 //玩家選擇了簡單(true)或困難(false)
 void Game::setlevel(){
     cout<<"\033[2J\033[1;1H"<<"Select the Level: \n1    Easy(Same Number)\n2    Hard(Same Number and Colour)\n0    Back Home\n";
@@ -185,7 +254,6 @@ void Game::cardinfo(int a){
 }
 void Game::showcardB(int a, int b){
     turned++;
-    cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<endl;
     cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<"        Grade: "<<grade()<<endl;
     int s=1;//從1數到最後
     for(int y=0; y<cardsetY; y++){
@@ -204,7 +272,6 @@ void Game::showcardB(int a, int b){
 }
 void Game::showcardA(int a){
     turned++;
-    cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<endl;
     cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<"        Grade: "<<grade()<<endl;
     int s=1;//從1數到最後
     for(int y=0; y<cardsetY; y++){
@@ -223,7 +290,6 @@ void Game::showcardA(int a){
 void Game::cardorder(){
     /*numOfCard=20,cardsetY=5,cardsetX=4;
     cardset=cardsetB;*/
-    cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<endl;
     cout<<"\033[2J\033[1;1H"<<"Turned: "<<turned<<"        Grade: "<<grade()<<endl;
     int s=1;
     for(int y=0; y<cardsetY; y++){
@@ -267,16 +333,14 @@ char Game::grade(){
     else
         return 'D';
 }
-
 //全部配對成功
 void Game::end(){
     cout<<"\033[2J\033[1;1H"<<endl<<"    Mission Complete \n    You Got a "<<grade()<<" Star\n";
     backHome();
 }
-
 int main()
 {
     Game a;
     a.home();
-
+    
 }
