@@ -182,7 +182,7 @@ void Game::start() {
 void Game::setlevel() {
     cout << "\033[2J\033[1;1H" << "Select the Level: \n1    Easy(Same Number)\n2    Hard(Same Number and Colour)\n0    Back Home\n";
     int a; cin >> a;
-    while (a > 2) {
+    while (a < 0 || a > 2) {
         cout << "\033[2J\033[1;1H" << "Select the Level: \n1    Easy(Same Number)\n2    Hard(Same Number and Colour)\n0    Back Home\n";
         cout << "Error: " << a << " is not a corrtect command!!\nTry again\n";
         cin >> a;
@@ -201,7 +201,7 @@ void Game::setlevel() {
 void Game::setnumOfCard() {
     cout << "\033[2J\033[1;1H" << "Select the Level: \n1    12 Card\n2    20 Crad\n0    Back Page\n";
     int a; cin >> a;
-    while (a > 2) {
+    while (a < 0 || a > 2) {
         cout << "\033[2J\033[1;1H" << "Select the Level: \n1    12 Card\n2    20 Crad\n0    Back Page\n";
         cout << "Error: " << a << " is not a corrtect command!!\nTry again\n";
         cin >> a;
@@ -316,6 +316,4 @@ int main()
 {
     Game a;
     a.home();
-
-
 }
