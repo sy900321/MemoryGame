@@ -66,7 +66,7 @@ void Game::home() {
 
     cout << "Welecome To Group 6\n    Card Matching\nPress 1 Get Start\nPress 2 Read Rules\nPress 0 Quit\n";
     int a; cin >> a;
-    while (a > 2) {
+    while (a < 0 || a > 2) {
         cout << "\033[2J\033[1;1H";
         cout << "Welecome To Group 6\n    Card Matching\nPress 1 Get Start\nPress 2 Read Rules\nPress 0 Quit\n";
         cout << "Error: " << a << " is not a corrtect command!!\nTry again\n";
