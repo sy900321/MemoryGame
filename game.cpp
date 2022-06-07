@@ -274,7 +274,7 @@ char Game::grade() {
 
 //全部配對成功
 void Game::end() {
-    cout << "\033[2J\033[1;1H" << endl << "    Mission Complete \n    You Got a " << grade() << " Star";
+    cout << "\033[2J\033[1;1H" << endl << "    Mission Complete \n    You Got a " << grade() << " Star\n";
     turned = 0;
     numOfPair = 0;
     backHome();
